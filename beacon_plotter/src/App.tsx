@@ -310,7 +310,7 @@ function App() {
       </Switch>
       <Show when={show_help()}>
         <div class="absolute inset-0 flex flex-col justify-center text-black">
-          <div class="mx-auto container max-w-screen-sm bg-gray-300 rounded-lg p-4">
+          <div class="mx-auto container max-w-screen-md bg-gray-300 rounded-lg p-4">
             <div class="flex flex-row">
               <h1 class="text-xl font-bold mb-3 grow">Help</h1>
               <button class="border-0" onClick={() => set_show_help(false)}>
@@ -329,7 +329,7 @@ function App() {
                 instead.
               </p>
               <p class="mb-2">The following interactions are available:</p>
-              <table>
+              <table class="border-separate">
                 <tbody>
                   <tr>
                     <td class="font-bold">Zoom to selection</td>
