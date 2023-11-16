@@ -246,7 +246,7 @@ function App() {
                       Sample under cursor
                     </Show>
                   </div>
-                  <div class="grid grid-cols-6 px-2 pt-3 border-t border-slate-600">
+                  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 px-2 pt-3 border-t border-slate-600">
                     <For each={DataFields}>
                       {([title, formatter]) => (
                         <div class="flex-col odd:bg-slate-900 px-2">
