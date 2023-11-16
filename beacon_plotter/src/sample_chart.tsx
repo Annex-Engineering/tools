@@ -122,10 +122,16 @@ export function SampleChart(
     onCleanup(() => source.off("samples", cb));
   });
 
+  const default_y_range = { min: 0, max: 5.5 };
   createEffect(() => {
-    const c = chart();
-    if (!c) return;
-    c.options.yRange = { min: 0, max: 5.5 };
+    const c = chart()!;
+    c.options.yRange = { ...default_y_range };
+    c.contentBoxDetector.node.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      if (e.button === 2) {
+        c.options.yRange = { ...default_y_range };
+      }
+    });
   });
 
   const on_wheel = (event: WheelEvent) => {
