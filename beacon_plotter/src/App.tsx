@@ -39,7 +39,7 @@ interface DataFieldProps {
 
 const DataFields: [string, ValidComponent][] = [
   ["Dist", (props: DataFieldProps) => <>{rp4(props.last_sample().dist)}</>],
-  ["Freq", (props: DataFieldProps) => <>{rp3(props.last_sample().dist)}</>],
+  ["Freq", (props: DataFieldProps) => <>{rp1(props.last_sample().freq)}</>],
   [
     "Pos",
     (props: DataFieldProps) => (
