@@ -9,10 +9,15 @@ import {
   createMemo,
   Switch,
   Match,
+  JSX,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Fa } from "solid-fa";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleInfo,
+  faClose,
+  faGear,
+} from "@fortawesome/free-solid-svg-icons";
 import "./App.css";
 import { Dynamic } from "solid-js/web";
 import { BeaconStreamDumper, Sample } from "./stream_dumper";
@@ -67,6 +72,10 @@ const DataFields: [string, ValidComponent][] = [
   ],
 ];
 
+const CodeSpan = (props: { children: JSX.Element }) => (
+  <span class="font-mono font-semibold">{props.children}</span>
+);
+
 const SetupText = () => {
   const config = [
     "[authorization]",
@@ -84,9 +93,8 @@ const SetupText = () => {
       <p class="mb-2">
         The tool connects to Beacon via Moonraker. To be able to connect, you
         must put the following under the{" "}
-        <span class="font-mono font-semibold">authorization.cors_domains</span>{" "}
-        option in your{" "}
-        <span class="font-mono font-semibold">moonraker.conf</span> config file.
+        <CodeSpan>authorization.cors_domains</CodeSpan> option in your{" "}
+        <CodeSpan>moonraker.conf</CodeSpan> config file.
       </p>
       <pre class="bg-slate-800 text-gray-300 p-1 rounded">
         <code>{config}</code>
@@ -146,128 +154,209 @@ function App() {
     onCleanup(() => sd.removeListener("samples", cb));
   });
 
+  const [show_help, set_show_help] = createSignal(false);
   const [highlighted_point, set_highlighted_point] = createSignal<
     Sample | undefined
   >();
 
   return (
-    <Switch>
-      <Match when={!source()}>
-        <div class="absolute inset-0 flex flex-col justify-center bg-slate-950 text-black">
-          <div class="mx-auto container max-w-screen-sm bg-gray-300 rounded-lg p-4">
-            <Show
-              when={!raw_source()?.state.connected}
-              fallback={
-                <h1 class="text-lg font-bold">Awaiting initial data</h1>
-              }
-            >
-              <h1 class="text-xl font-bold mb-3">Connection details</h1>
-              <div class="mb-3">
-                <SetupText />
-              </div>
-              <div class="mb-3">
-                <label
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                  for="ip"
-                >
-                  Moonraker IP address or domain
-                </label>
-                <input
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  type="ip"
-                  id="ip"
-                  value={settings.domain}
-                  onInput={(e) => set_settings("domain", e.currentTarget.value)}
-                />
-              </div>
-              <div class="mb-3">
-                <label
-                  class="block mb-2 text-sm font-medium text-gray-900"
-                  for="ip"
-                >
-                  Moonraker port
-                </label>
-                <input
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  type="ip"
-                  id="ip"
-                  value={settings.port}
-                  onInput={[set_settings, "port"]}
-                />
-              </div>
-              <div class="flex flex-row items-center gap-3">
-                <button
-                  type="button"
-                  classList={{
-                    "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-max":
-                      true,
-                    "bg-gray-700": !source_url(),
-                  }}
-                  onClick={connect}
-                  disabled={raw_source()?.state.connecting || !source_url()}
-                >
-                  <Show when={raw_source()?.state.connecting}>
-                    <Fa
-                      icon={faGear}
-                      spin={true}
-                      classList={{ "inline-block": true, "mr-2": true }}
-                    />
+    <>
+      <Switch>
+        <Match when={!source()}>
+          <div class="absolute inset-0 flex flex-col justify-center bg-slate-950 text-black">
+            <div class="mx-auto container max-w-screen-sm bg-gray-300 rounded-lg p-4">
+              <Show
+                when={!raw_source()?.state.connected}
+                fallback={
+                  <h1 class="text-lg font-bold">Awaiting initial data</h1>
+                }
+              >
+                <h1 class="text-xl font-bold mb-3">Connection details</h1>
+                <div class="mb-3">
+                  <SetupText />
+                </div>
+                <div class="mb-3">
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                    for="ip"
+                  >
+                    Moonraker IP address or domain:
+                  </label>
+                  <input
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="ip"
+                    value={settings.domain}
+                    onInput={(e) =>
+                      set_settings("domain", e.currentTarget.value)
+                    }
+                  />
+                </div>
+                <div class="mb-3">
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                    for="ip"
+                  >
+                    Moonraker port:
+                  </label>
+                  <input
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="ip"
+                    value={settings.port}
+                    onInput={(e) =>
+                      set_settings(
+                        "port",
+                        parseInt(e.currentTarget.value) || 80,
+                      )
+                    }
+                  />
+                </div>
+                <div class="mb-3 flex flex-row items-center">
+                  <label
+                    class="block text-sm font-medium text-gray-900"
+                    for="ip"
+                  >
+                    Secure connection:
+                  </label>
+                  <input
+                    class="w-4 h-4 ml-2 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2"
+                    type="checkbox"
+                    id="ip"
+                    onInput={(e) =>
+                      set_settings("secure", e.currentTarget.checked)
+                    }
+                    checked={settings.secure}
+                  />
+                </div>
+                <div class="flex flex-row items-center gap-3">
+                  <button
+                    type="button"
+                    classList={{
+                      "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-max":
+                        true,
+                      "bg-gray-700": !source_url(),
+                    }}
+                    onClick={connect}
+                    disabled={raw_source()?.state.connecting || !source_url()}
+                  >
+                    <Show when={raw_source()?.state.connecting}>
+                      <Fa
+                        icon={faGear}
+                        spin={true}
+                        classList={{ "inline-block": true, "mr-2": true }}
+                      />
+                    </Show>
+                    Connect
+                  </button>
+                  <Show when={raw_source()?.state.last_error}>
+                    {(error) => (
+                      <div class="text-red-600 font-bold">
+                        Connection error: {error()}
+                      </div>
+                    )}
                   </Show>
-                  Connect
-                </button>
-                <Show when={raw_source()?.state.last_error}>
-                  {(error) => (
-                    <div class="text-red-600 font-bold">
-                      Connection error: {error()}
+                </div>
+              </Show>
+            </div>
+          </div>
+        </Match>
+        <Match when={source()}>
+          {(source) => (
+            <div class="absolute inset-0 flex flex-col bg-slate-950 text-yellow-300">
+              <SampleChart
+                class="grow"
+                set_highlighted_point={set_highlighted_point}
+                source={source}
+              />
+              <Show when={highlighted_point() || last_sample()}>
+                {(last_sample) => (
+                  <div class="w-full">
+                    <div
+                      class="text-xs font-extrabold bg-slate-950 w-full flex flex-row justify-between px-2 items-center"
+                      style={{ "margin-bottom": "-8px" }}
+                    >
+                      <div>
+                        <Show
+                          when={highlighted_point()}
+                          fallback={"Last sample"}
+                        >
+                          Sample under cursor
+                        </Show>
+                      </div>
+                      <button onClick={() => set_show_help(true)}>
+                        <Fa icon={faCircleInfo} />
+                      </button>
                     </div>
-                  )}
-                </Show>
-              </div>
-            </Show>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 px-2 pt-3 border-t border-slate-600">
+                      <For each={DataFields}>
+                        {([title, formatter]) => (
+                          <div class="flex-col odd:bg-slate-900 px-2">
+                            <div class="font-extrabold text-sm">{title}</div>
+                            <div>
+                              <Dynamic
+                                component={formatter}
+                                last_sample={last_sample}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </div>
+                )}
+              </Show>
+            </div>
+          )}
+        </Match>
+      </Switch>
+      <Show when={show_help()}>
+        <div class="absolute inset-0 flex flex-col justify-center text-black">
+          <div class="mx-auto container max-w-screen-sm bg-gray-300 rounded-lg p-4">
+            <div class="flex flex-row">
+              <h1 class="text-xl font-bold mb-3 grow">Help</h1>
+              <button class="border-0" onClick={() => set_show_help(false)}>
+                <Fa icon={faClose} />
+              </button>
+            </div>
+            <div>
+              <p class="mb-2">
+                The interface shows the distance measured by Beacon on the{" "}
+                <CodeSpan>y</CodeSpan> axis, as a function of time shown on the{" "}
+                <CodeSpan>x</CodeSpan> axis.
+              </p>
+              <p class="mb-2">
+                The bottom bar shows the last received sample. When hovering
+                over the graph, the sample under the cursor will be shown
+                instead.
+              </p>
+              <p class="mb-2">The following interactions are available:</p>
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="font-bold">Zoom to selection</td>
+                    <td>Ctrl-click and drag on the graph</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Zoom around point</td>
+                    <td>
+                      Hover over a point in the graph, hold Ctrl, and use the
+                      scroll wheel to zoom
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Pan</td>
+                    <td>Use the scroll wheel to go forward and back in time</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Reset Y axis</td>
+                    <td>Right click on the graph</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </Match>
-      <Match when={source()}>
-        {(source) => (
-          <div class="absolute inset-0 flex flex-col bg-slate-950 text-yellow-300">
-            <SampleChart
-              class="grow"
-              set_highlighted_point={set_highlighted_point}
-              source={source}
-            />
-            <Show when={highlighted_point() || last_sample()}>
-              {(last_sample) => (
-                <div>
-                  <div
-                    class="text-xs font-extrabold bg-slate-950 w-max mx-2"
-                    style={{ "margin-bottom": "-8px" }}
-                  >
-                    <Show when={highlighted_point()} fallback={"Last sample"}>
-                      Sample under cursor
-                    </Show>
-                  </div>
-                  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 px-2 pt-3 border-t border-slate-600">
-                    <For each={DataFields}>
-                      {([title, formatter]) => (
-                        <div class="flex-col odd:bg-slate-900 px-2">
-                          <div class="font-extrabold text-sm">{title}</div>
-                          <div>
-                            <Dynamic
-                              component={formatter}
-                              last_sample={last_sample}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </For>
-                  </div>
-                </div>
-              )}
-            </Show>
-          </div>
-        )}
-      </Match>
-    </Switch>
+      </Show>
+    </>
   );
 }
 
