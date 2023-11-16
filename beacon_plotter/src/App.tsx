@@ -67,6 +67,34 @@ const DataFields: [string, ValidComponent][] = [
   ],
 ];
 
+const SetupText = () => {
+  const config = [
+    "[authorization]",
+    "cors_domains:",
+    `    ...`,
+    `    ${window.location.protocol}//${window.location.host}   # Add this line`,
+  ].join("\n");
+
+  return (
+    <div class="text-sm">
+      <p class="mb-1">
+        This tool provides a Beacon "oscilloscope" to view real time samples
+        received from the sensor.
+      </p>
+      <p class="mb-2">
+        The tool connects to Beacon via Moonraker. To be able to connect, you
+        must put the following under the{" "}
+        <span class="font-mono font-semibold">authorization.cors_domains</span>{" "}
+        option in your{" "}
+        <span class="font-mono font-semibold">moonraker.conf</span> config file.
+      </p>
+      <pre class="bg-slate-800 text-gray-300 p-1 rounded">
+        <code>{config}</code>
+      </pre>
+    </div>
+  );
+};
+
 function App() {
   const [last_sample, set_last_sample] = createSignal<Sample>();
 
@@ -134,6 +162,9 @@ function App() {
               }
             >
               <h1 class="text-xl font-bold mb-3">Connection details</h1>
+              <div class="mb-3">
+                <SetupText />
+              </div>
               <div class="mb-3">
                 <label
                   class="block mb-2 text-sm font-medium text-gray-900"
