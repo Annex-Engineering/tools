@@ -260,7 +260,7 @@ export function SampleChart(
       const dy = dpoint.y - ppoint.y;
       const dist = dx * dx + dy * dy;
       if (dist < 25) {
-        const idx = domainSearch(data, 0, data.length, dpoint.x, (d) => d.x);
+        const idx = domainSearch(data, 0, data.length, value.x, (d) => d.x);
         if (idx < 0 || idx >= data.length) {
           return shp(undefined);
         }
