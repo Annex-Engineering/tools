@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Annex Engineering Toolbox</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body
+    class="flex flex-col items-center bg-slate-800 text-white h-screen justify-between"
+  >
+    <div>
+      <h1
+        class="mt-6 mb-8 font-extrabold text-4xl leading-none tracking-tight lg:text-6xl"
+      >
+        Annex Engineering Toolbox
+      </h1>
+      <p
+        class="mb-12 text-lg font-normal text-slate-300 lg:text-xl sm:px-16 container"
+      >
+        This site contains various useful tools for 3D printing. They are
+        provided here in the hopes that they will be useful. The source for all
+        the tools can be found in the accompanying GitHub repository. All code,
+        unless otherwise noted, is license under the MIT License.
+      </p>
+
+      <div
+        class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8"
+      >
+        <a href="/beacon_plotter/">
+          <div
+            class="rounded-lg shadow-lg bg-gray-600 w-full antialiased bg-no-repeat bg-cover bg-blend-multiply text-slate-200 bg-[url('/assets/screenshots/beacon_plotter.png')] aspect-[16/10]"
+          >
+            <div class="w-full h-full p-3 rounded-lg">
+              <h2 class="font-medium tracking-tight text-2xl mb-4">
+                Beacon Plotter
+              </h2>
+              <p class="font">
+                Beacon Plotter is an "oscilloscope" for the Beacon probe. Using
+                this tool, you can get a live view of the data being gathered by
+                the Beacon sensor. Works for any Beacon revision, connects
+                directly to Moonraker.
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="mb-2 flex flex-col items-center text-slate-500">
+      <div class="space-x-2 mb-1">
+        <a href="https://discord.annex.engineering">
+          <i aria-hidden="true" class="fa-brands fa-xl fa-discord"></i>
+          <span class="fa-sr-only">Discord</span>
+        </a>
+        <a href="https://github.com/Annex-Engineering/tools">
+          <i aria-hidden="true" class="fa-brands fa-xl fa-github"></i>
+          <span class="fa-sr-only">GitHub</span>
+        </a>
+      </div>
+      <p class="text-sm">
+        &copy; Annex Engineering 2023-
+        <a href="https://creativecommons.org/public-domain/cc0/">CC0</a> No
+        Rights Reserved
+      </p>
+    </div>
+  </body>
+</html>
