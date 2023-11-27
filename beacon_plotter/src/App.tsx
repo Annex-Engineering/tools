@@ -338,7 +338,7 @@ function App() {
                   <tr>
                     <td class="font-bold">Zoom around point</td>
                     <td>
-                      Hover over a point in the graph, hold Ctrl, and use the
+                      Hover over a point in the graph, hold Shift, and use the
                       scroll wheel to zoom
                     </td>
                   </tr>
