@@ -27,6 +27,7 @@ export interface BeaconStreamState {
 
 export class BeaconStreamDumper extends EventEmitter<BeaconStreamEvents> {
   readonly api_url;
+  readonly sensor;
   private next_id = 0;
   private ws?: WebSocket;
   private header?: string[];
@@ -35,7 +36,7 @@ export class BeaconStreamDumper extends EventEmitter<BeaconStreamEvents> {
   readonly state: BeaconStreamState;
   private update;
 
-  constructor(api_url: string) {
+  constructor(api_url: string, sensor: string | null) {
     super();
 
     [this.state, this.update] = createStore<BeaconStreamState>({
@@ -45,6 +46,7 @@ export class BeaconStreamDumper extends EventEmitter<BeaconStreamEvents> {
     });
 
     this.api_url = api_url;
+    this.sensor = sensor;
     this.connect();
   }
 
@@ -68,13 +70,13 @@ export class BeaconStreamDumper extends EventEmitter<BeaconStreamEvents> {
   private on_open() {
     this.update({ connected: true, connecting: false });
     this.emit("connected");
-    this.send({ method: "beacon/dump" });
+    this.send({ method: "beacon/dump", params: { sensor: this.sensor } });
   }
 
   private on_close(event: CloseEvent) {
     if (!event.wasClean) {
       const reason = event.reason || `error code ${event.code}`;
-      this.update("last_error", reason);
+      this.update("last_error", "Connection closed: " + reason);
       this.emit("error", reason);
     }
     this.update(() => ({
@@ -132,8 +134,12 @@ export class BeaconStreamDumper extends EventEmitter<BeaconStreamEvents> {
         samples.push(s);
       }
       this.emit("samples", samples);
+    } else if (input.error?.message) {
+      this.update("last_error", input.error.message);
+      this.disconnect();
     } else {
       console.log("Unknown message", input);
+      this.update("last_error", "Unknown message received");
       this.disconnect();
     }
   }

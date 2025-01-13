@@ -10,6 +10,7 @@ import {
   Switch,
   Match,
   JSX,
+  createResource,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Fa } from "solid-fa";
@@ -24,8 +25,8 @@ import { BeaconStreamDumper, Sample } from "./stream_dumper";
 import { SampleChart } from "./sample_chart";
 
 const precision_rounder = (d: number) => {
-  return (v: number) => {
-    return v.toFixed(d);
+  return (v: number | null) => {
+    return v?.toFixed(d) ?? "-";
   };
 };
 const rp1 = precision_rounder(1);
@@ -110,6 +111,7 @@ function App() {
   let init_settings = {
     domain: "",
     port: 80,
+    sensor: "",
     secure: false,
   };
   if (saved_settings) {
@@ -132,7 +134,7 @@ function App() {
   const connect = () => {
     const url = source_url();
     if (url) {
-      set_raw_source(new BeaconStreamDumper(url));
+      set_raw_source(new BeaconStreamDumper(url, settings.sensor));
     }
   };
 
@@ -210,6 +212,22 @@ function App() {
                     }
                   />
                 </div>
+                <div class="mb-3">
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900"
+                    for="ip"
+                  >
+                    Sensor (leave blank for default):
+                  </label>
+                  <input
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    id="ip"
+                    value={settings.sensor}
+                    onInput={(e) =>
+                      set_settings("sensor", e.currentTarget.value)
+                    }
+                  />
+                </div>
                 <div class="mb-3 flex flex-row items-center">
                   <label
                     class="block text-sm font-medium text-gray-900"
@@ -249,9 +267,7 @@ function App() {
                   </button>
                   <Show when={raw_source()?.state.last_error}>
                     {(error) => (
-                      <div class="text-red-600 font-bold">
-                        Connection error: {error()}
-                      </div>
+                      <div class="text-red-600 font-bold">{error()}</div>
                     )}
                   </Show>
                 </div>
